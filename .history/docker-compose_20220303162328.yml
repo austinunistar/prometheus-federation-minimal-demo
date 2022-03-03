@@ -12,25 +12,42 @@ volumes:
     grafana_follower_data: {}
 
 services:
-
-    prometheus-follower:
-        container_name: prometheus-follower
+    prometheus-leader:
+        container_name: prometheus-leader
         image: prom/prometheus
         networks:
             - monitoring_network
         volumes:
-            - ./configs/prometheus-follower/prometheus.yml:/etc/prometheus/prometheus.yml
-            - ./configs/prometheus-follower/records/node_exporter_recording.rules:/etc/prometheus/node_exporter_recording.rules
-            - ./configs/prometheus-follower/alerts/node_exporter_alert.rules:/etc/prometheus/node_exporter_alert.rules
-            - prometheus_follower_1_data:/prometheus
+            - ./configs/prometheus-leader/prometheus.yml:/etc/prometheus/prometheus.yml
+            - ./configs/prometheus-leader/alerts/alert.rules:/etc/prometheus/alert.rules
+            - prometheus_leader_data:/prometheus
         ports:
-            - "9099:9090"
+            - "9090:9090"
         command:
             - '--config.file=/etc/prometheus/prometheus.yml'
             - '--storage.tsdb.path=/prometheus'
             - '--web.console.libraries=/etc/prometheus/console_libraries'
             - '--web.console.templates=/etc/prometheus/consoles'
         restart: unless-stopped
+
+    # prometheus-follower-1:
+    #     container_name: prometheus-follower-1
+    #     image: prom/prometheus
+    #     networks:
+    #         - monitoring_network
+    #     volumes:
+    #         - ./configs/prometheus-follower-1/prometheus.yml:/etc/prometheus/prometheus.yml
+    #         - ./configs/prometheus-follower-1/records/node_exporter_recording.rules:/etc/prometheus/node_exporter_recording.rules
+    #         - ./configs/prometheus-follower-1/alerts/node_exporter_alert.rules:/etc/prometheus/node_exporter_alert.rules
+    #         - prometheus_follower_1_data:/prometheus
+    #     ports:
+    #         - "9099:9090"
+    #     command:
+    #         - '--config.file=/etc/prometheus/prometheus.yml'
+    #         - '--storage.tsdb.path=/prometheus'
+    #         - '--web.console.libraries=/etc/prometheus/console_libraries'
+    #         - '--web.console.templates=/etc/prometheus/consoles'
+    #     restart: unless-stopped
 
     # prometheus-follower-2:
     #     container_name: prometheus-follower-2
@@ -98,16 +115,16 @@ services:
             - "9100"
         restart: unless-stopped
 
-    # alertmanager:
-    #     image: prom/alertmanager
-    #     container_name: alertmanager
-    #     networks:
-    #         - monitoring_network
-    #     volumes:
-    #         - ./configs/alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml
-    #     ports:
-    #         - "9093:9093"
-    #     restart: unless-stopped
+    alertmanager:
+        image: prom/alertmanager
+        container_name: alertmanager
+        networks:
+            - monitoring_network
+        volumes:
+            - ./configs/alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml
+        ports:
+            - "9093:9093"
+        restart: unless-stopped
 
     cadvisor:
       image: google/cadvisor:latest
