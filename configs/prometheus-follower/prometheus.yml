@@ -44,7 +44,7 @@ scrape_configs:
         - '{job="node"}'
         - '{job="cadvisor"}'
     static_configs:
-      - targets: ['10.1.105.56:9090']
+      - targets: ['10.1.105.56:9099']
 
   - job_name: 'cadvisor'
     scrape_interval: 10s
