@@ -40,7 +40,7 @@ services:
             - ./configs/prometheus-follower-1/alerts/node_exporter_alert.rules:/etc/prometheus/node_exporter_alert.rules
             - prometheus_follower_1_data:/prometheus
         ports:
-            - "9098:9090"
+            - "9099:9090"
         command:
             - '--config.file=/etc/prometheus/prometheus.yml'
             - '--storage.tsdb.path=/prometheus'
@@ -59,7 +59,7 @@ services:
             # - ./configs/prometheus-follower-2/alerts/node_exporter_alert.rules:/etc/prometheus/node_exporter_alert.rules
             - prometheus_follower_2_data:/prometheus
         ports:
-            - "9099:9090"
+            - "9098:9090"
         command:
             - '--config.file=/etc/prometheus/prometheus.yml'
             - '--storage.tsdb.path=/prometheus'
