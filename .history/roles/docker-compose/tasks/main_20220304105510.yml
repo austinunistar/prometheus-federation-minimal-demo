@@ -1,0 +1,10 @@
+---
+- name: Start docker-compose
+  shell: 'docker-compose up -d'
+  args:
+    chdir: '/web/prometheus-client'
+
+- name: Stop docker-compose
+  shell: 'docker-compose stop'
+  args:
+    chdir: '/web/prometheus-client'

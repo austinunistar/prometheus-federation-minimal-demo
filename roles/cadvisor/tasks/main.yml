@@ -1,0 +1,17 @@
+---
+- name: fix cadvisor issue
+  shell: "{{ item }}"
+  with_items:
+    - mount -o remount,rw /sys/fs/cgroup
+    - ln -s /sys/fs/cgroup/cpu,cpuacct /sys/fs/cgroup/cpuacct,cpu
+  ignore_errors: yes
+
+- name: Start docker-compose
+  shell: 'docker-compose up -d'
+  args:
+    chdir: '/var/admin/docker-compose-alertmanager-prometheus'
+
+- name: Restart docker-compose
+  shell: 'docker-compose restart grafana'
+  args:
+    chdir: '/var/admin/docker-compose-alertmanager-prometheus'

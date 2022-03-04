@@ -1,0 +1,21 @@
+---
+- name: Create docker-compose folder
+  file:
+    path: {{ service_home_dir }} 
+    state: directory 
+
+- name: Create docker-compose.yml
+  file:
+    path: {{ service_home_dir }}/docker-compose.yml
+    state: touch
+
+- name: update docker-compose config
+  file:
+    template: src={{ item.src }}  dest={{ item.dest }} mode={{ item.mode }}
+    with_items:
+      - { src: 'docker-compose.yml', dest: "{{ service_home_dir }}/",  mode: 755 }
+
+- name: Start docker-compose
+  shell: 'docker-compose up -d'
+  args:
+    chdir: '/web/prometheus-client'

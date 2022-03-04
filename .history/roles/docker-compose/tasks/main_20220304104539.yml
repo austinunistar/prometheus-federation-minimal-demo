@@ -1,0 +1,39 @@
+---
+- name: fix cadvisor issue
+  shell: "{{ item }}"
+  with_items:
+    - mount -o remount,rw /sys/fs/cgroup
+    - ln -s /sys/fs/cgroup/cpu,cpuacct /sys/fs/cgroup/cpuacct,cpu
+  ignore_errors: yes
+
+- git:
+    repo: 'https://github.com/austinunistar/docker-compose-alertmanager-prometheus.git'
+    dest: /var/admin/docker-compose-alertmanager-prometheus
+
+- name: Create Folders
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: root
+    group: root
+  loop:
+    - "/var/lib/grafama/"
+    - "/var/lib/jenkins"
+    - "/var/admin"
+
+- name: Start docker-compose
+  shell: 'docker-compose up -d'
+  args:
+    chdir: '/var/admin/docker-compose-alertmanager-prometheus'
+
+- name: Grant privilege to folder
+  file:
+    path: "/var/admin/docker-compose-alertmanager-prometheus/grafana"
+    state: directory
+    recurse: yes
+    mode: 0777
+
+- name: Restart docker-compose
+  shell: 'docker-compose restart grafana'
+  args:
+    chdir: '/var/admin/docker-compose-alertmanager-prometheus'

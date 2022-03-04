@@ -1,0 +1,31 @@
+---
+- name: Install required pkgs
+  yum:
+    name: "{{ item }}"
+    state: latest
+  loop:
+    - yum-utils
+    - device-mapper-persistent-data
+    - lvm2
+    - epel-release
+
+- name: Add Docker repo
+  shell: ' curl -L "https://download.docker.com/linux/centos/docker-ce.repo" -o /etc/yum.repos.d/docker-ce.repo '
+  
+- name: Add docker-compose
+  get_url:
+    url: "https://github.com/docker/compose/releases/download/{{ docker_compose_version }}/docker-compose-Linux-x86_64"
+    dest: /usr/local/bin/docker-compose
+    mode: a+x
+
+- name: Create soft link with docker-compose
+  file:
+    src: /usr/local/bin/docker-compose
+    dest: /usr/bin/docker-compose
+    state: link
+
+- name: Start and Enable Docker service
+  service:
+    name: docker
+    state: started
+    enabled: yes
