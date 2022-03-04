@@ -1,0 +1,9 @@
+- hosts: rel-dt-deploy
+  roles:
+    - role: cadvisor
+      tags: cadvisor_prepare
+
+    - role: docker
+      tags: docker_install
+
+    - role: docker-compose
